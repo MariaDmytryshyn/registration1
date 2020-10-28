@@ -1,5 +1,6 @@
 package com.epam.registration.dto;
 
+import com.epam.registration.dto.validation.AgeValidation;
 import com.epam.registration.dto.validation.FieldMatch;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
@@ -22,6 +24,8 @@ public class NewUserDto {
     private String userName;
 
     @JsonFormat(pattern="yyyy-MM-dd")
+    @Past
+    @AgeValidation
     private LocalDate dateOfBirth;
 
     @NotBlank

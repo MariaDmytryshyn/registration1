@@ -2,7 +2,6 @@ package com.epam.registration.service.impl;
 
 import com.epam.registration.dto.NewUserDto;
 import com.epam.registration.dto.UserDto;
-import com.epam.registration.exceptions.AgeException;
 import com.epam.registration.exceptions.IdentificationNumberException;
 import com.epam.registration.exceptions.NameIsRegisteredException;
 import com.epam.registration.model.User;
@@ -22,8 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import static com.epam.registration.service.impl.UserServiceImpl.mapUserToUserDto;
 
 @Slf4j
@@ -31,7 +28,6 @@ import static com.epam.registration.service.impl.UserServiceImpl.mapUserToUserDt
 @RequiredArgsConstructor
 public class RegisterServiceImpl implements RegisterService {
 
-    private static final long MIN_AGE = 18;
     private final UserRepository userRepository;
     private final IdentificationNumberRepository identificationNumberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -67,16 +63,10 @@ public class RegisterServiceImpl implements RegisterService {
         if (userRepository.findByUserName(user.getUsername()).isPresent()) {
             throw new NameIsRegisteredException(user.getUsername());
         }
-        if (!role.equals(Role.ROLE_ADMIN)) {
-            LocalDate today = LocalDate.now();
-            long years = ChronoUnit.YEARS.between(user.getDateOfBirth(), today);
-            if (years < MIN_AGE) {
-                throw new AgeException(user);
-            }
-            if (userService.matchesIIN(user)) {
-                throw new IdentificationNumberException(user);
-            }
+        if (!role.equals(Role.ROLE_ADMIN) && userService.matchesIIN(user)) {
+            throw new IdentificationNumberException(user);
         }
+
         log.info("Register a new user with username {}", user.getUsername());
         user.setRole(role);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -89,5 +79,4 @@ public class RegisterServiceImpl implements RegisterService {
     public void signOut() {
         SecurityContextHolder.clearContext();
     }
-
 }
