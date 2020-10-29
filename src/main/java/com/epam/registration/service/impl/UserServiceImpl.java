@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
         List<IdentificationNumber> identificationNumber = identificationNumberRepository.findAll();
         if (!identificationNumber.isEmpty()) {
             for (IdentificationNumber i : identificationNumber) {
-                if (iin.equals(i.getCode())) {
+                if (iin.equals(i.getIdentificationNumber())) {
                     return true;
                 }
             }
