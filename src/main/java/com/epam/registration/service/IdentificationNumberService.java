@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface IdentificationNumberService {
 
-    IdentificationNumberDto addNewCode(IdentificationNumberDto identificationNumberDto);
-    List<IdentificationNumberDto> getAllCodes();
+    IdentificationNumberDto addNewIdentificationNumber(IdentificationNumberDto identificationNumberDto);
+    List<IdentificationNumberDto> getAllIdentificationNumbers();
 }

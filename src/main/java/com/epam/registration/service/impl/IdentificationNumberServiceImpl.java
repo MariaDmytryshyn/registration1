@@ -20,34 +20,34 @@ public class IdentificationNumberServiceImpl implements IdentificationNumberServ
     private final IdentificationNumberRepository identificationNumberRepository;
 
     @Override
-    public IdentificationNumberDto addNewCode(IdentificationNumberDto identificationNumberDto) {
-        IdentificationNumber identificationNumber = mapCodeDtoToUser(identificationNumberDto);
+    public IdentificationNumberDto addNewIdentificationNumber(IdentificationNumberDto identificationNumberDto) {
+        IdentificationNumber identificationNumber = mapIdentificationNumberDtoToIdentificationNumber(identificationNumberDto);
         identificationNumber = identificationNumberRepository.save(identificationNumber);
-        log.info("Codes with id {} successfully registered", identificationNumber.getId());
+        log.info("Identification number with id {} successfully registered", identificationNumber.getId());
         return identificationNumberDto;
     }
 
     @Override
-    public List<IdentificationNumberDto> getAllCodes() {
+    public List<IdentificationNumberDto> getAllIdentificationNumbers() {
         List<IdentificationNumberDto> allCodes = identificationNumberRepository.findAll().stream()
-                .map(IdentificationNumberServiceImpl::mapCodesToCodeDto)
+                .map(IdentificationNumberServiceImpl::mapIdentificationNumberToIdentificationNumberDto)
                 .collect(Collectors.toList());
-        log.info("Codes are found {}", allCodes.size());
+        log.info("Identification numbers are found {}", allCodes.size());
         return allCodes;
 
     }
 
-    static IdentificationNumber mapCodeDtoToUser(IdentificationNumberDto identificationNumberDto) {
+    static IdentificationNumber mapIdentificationNumberDtoToIdentificationNumber(IdentificationNumberDto identificationNumberDto) {
         ModelMapper modelMapper = new ModelMapper();
         IdentificationNumber identificationNumber = modelMapper.map(identificationNumberDto, IdentificationNumber.class);
-        log.debug("Map to Codes from CodeDto: {}", identificationNumberDto);
+        log.debug("Map to IdentificationNumber from IdentificationNumberDto: {}", identificationNumberDto);
         return identificationNumber;
     }
 
-    public static IdentificationNumberDto mapCodesToCodeDto(IdentificationNumber identificationNumber) {
+    public static IdentificationNumberDto mapIdentificationNumberToIdentificationNumberDto(IdentificationNumber identificationNumber) {
         ModelMapper modelMapper = new ModelMapper();
         IdentificationNumberDto identificationNumberDto = modelMapper.map(identificationNumber, IdentificationNumberDto.class);
-        log.debug("Map from Codes to CodeDto: {}", identificationNumber);
+        log.debug("Map from IdentificationNumber to IdentificationNumberDto: {}", identificationNumber);
         return identificationNumberDto;
     }
 }

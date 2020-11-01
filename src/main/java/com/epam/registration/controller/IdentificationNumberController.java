@@ -37,7 +37,7 @@ public class IdentificationNumberController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public IdentificationNumberModel setIdentificationNumber(@Valid @RequestBody IdentificationNumberDto identificationNumberDto) {
-        return identificationNumberModelAssembler.toModel(identificationNumberService.addNewCode(identificationNumberDto));
+        return identificationNumberModelAssembler.toModel(identificationNumberService.addNewIdentificationNumber(identificationNumberDto));
     }
 
     @ApiOperation("Get list of all identification numbers")
@@ -45,6 +45,6 @@ public class IdentificationNumberController {
     @GetMapping("/identificationNumber")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<IdentificationNumberModel> getAllIdentificationNumbers() {
-        return identificationNumberModelAssembler.toCollectionModel(identificationNumberService.getAllCodes());
+        return identificationNumberModelAssembler.toCollectionModel(identificationNumberService.getAllIdentificationNumbers());
     }
 }

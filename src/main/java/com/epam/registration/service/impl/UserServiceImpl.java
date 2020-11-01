@@ -44,7 +44,6 @@ public class UserServiceImpl implements UserService {
     public boolean matchesIIN(User user) {
         if (user.getRole() != null && user.getRole().equals(Role.ROLE_ADMIN)) {
             return false;
-
         }
         String iin = user.getCardNumber().substring(0, 6);
         List<IdentificationNumber> identificationNumber = identificationNumberRepository.findAll();
@@ -66,5 +65,4 @@ public class UserServiceImpl implements UserService {
         log.info("Users are found {}", allUsers.size());
         return allUsers;
     }
-
 }

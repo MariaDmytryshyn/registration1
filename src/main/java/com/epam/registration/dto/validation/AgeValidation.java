@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = AgeValidatorImpl.class)
 public @interface AgeValidation {
-    String message() default "Checks if the user is not under the minimal age";
+    String message() default "The user is under the minimal age";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

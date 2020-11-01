@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @Slf4j
 @RestControllerAdvice
 public class HttpExceptionHandler {
@@ -22,12 +24,21 @@ public class HttpExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorInfoDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.error(ex.getMessage());
-        if (ex.getMessage().contains("Checks if the user is not under the minimal age")) {
-            ErrorInfoDto errorInfoDto = new ErrorInfoDto(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
+        log.error(ex.getBindingResult().getAllErrors().toString());
+        if (ex.getBindingResult().hasFieldErrors()){
+        if (Objects.equals(ex.getBindingResult().getFieldError().getCode(), "Past")) {
+            ErrorInfoDto errorInfoDto = new ErrorInfoDto(HttpStatus.BAD_REQUEST, ex.getBindingResult().getFieldError().getDefaultMessage());
             return new ResponseEntity<>(errorInfoDto, errorInfoDto.getHttpStatus());
         }
-        ErrorInfoDto errorInfoDto = new ErrorInfoDto(HttpStatus.BAD_REQUEST, ex.getMessage());
+        if (Objects.equals(ex.getBindingResult().getFieldError().getCode(), "AgeValidation")) {
+            ErrorInfoDto errorInfoDto = new ErrorInfoDto(HttpStatus.FORBIDDEN, ex.getBindingResult().getFieldError().getDefaultMessage());
+            return new ResponseEntity<>(errorInfoDto, errorInfoDto.getHttpStatus());
+        }}
+        if (ex.getBindingResult().hasGlobalErrors()) {
+            ErrorInfoDto errorInfoDto = new ErrorInfoDto(HttpStatus.BAD_REQUEST, ex.getBindingResult().getGlobalError().getDefaultMessage());
+            return new ResponseEntity<>(errorInfoDto, errorInfoDto.getHttpStatus());
+        }
+        ErrorInfoDto errorInfoDto = new ErrorInfoDto(HttpStatus.BAD_REQUEST, ex.getBindingResult().getFieldError().getDefaultMessage());
         return new ResponseEntity<>(errorInfoDto, errorInfoDto.getHttpStatus());
     }
 }

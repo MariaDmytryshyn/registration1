@@ -18,7 +18,7 @@ public @interface FieldMatch {
 
     String second();
 
-    String message() default "Checks if fields match";
+    String message() default "The passwords don't match";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
     @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})

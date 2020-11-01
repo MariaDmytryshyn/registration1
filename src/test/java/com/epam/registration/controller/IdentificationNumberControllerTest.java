@@ -29,6 +29,12 @@ class IdentificationNumberControllerTest {
     @Test
     void setIdentificationNumberTest() {
         identificationNumberController.setIdentificationNumber(new IdentificationNumberDto("123454"));
-        verify(identificationNumberService, times(1)).addNewCode(any());
+        verify(identificationNumberService, times(1)).addNewIdentificationNumber(any());
+    }
+
+    @Test
+    void getAllIdentificationNumbersTest() {
+        identificationNumberController.getAllIdentificationNumbers();
+        verify(identificationNumberService, times(1)).getAllIdentificationNumbers();
     }
 }

@@ -1,7 +1,11 @@
 package com.epam.registration.service.impl;
 
+import com.epam.registration.dto.NewUserDto;
 import com.epam.registration.dto.UserDto;
+import com.epam.registration.model.IdentificationNumber;
 import com.epam.registration.model.User;
+import com.epam.registration.model.enums.Role;
+import com.epam.registration.repository.IdentificationNumberRepository;
 import com.epam.registration.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,12 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static com.epam.registration.service.impl.UserServiceImpl.mapUserToUserDto;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +33,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private IdentificationNumberRepository identificationNumberRepository;
 
 
     @Test
@@ -45,10 +53,40 @@ class UserServiceImplTest {
                 () -> userService.deleteUser(new UserDto()));
     }
 
+    @Test
+    void getAllUsersTest() {
+        userService.getAllUsers();
+        verify(userRepository, times(1)).findAll();
+    }
+
     private User createTestUser() {
         User user = new User();
         user.setUserName("TestName");
         user.setPassword(TEST_PASSWORD);
         return user;
     }
+
+    @Test
+    void mapUserToUserDtoTest() {
+        User user = createTestUser();
+        NewUserDto userDto = mapUserToUserDto(user);
+        assertEquals(user.getUsername(), userDto.getUserName());
+
+    }
+
+    @Test
+    void matchesIINAdminTest() {
+        User user = createTestUser();
+        user.setRole(Role.ROLE_ADMIN);
+        assertFalse(userService.matchesIIN(user));
+    }
+
+    @Test
+    void matchesIINFalse() {
+        User user = createTestUser();
+        user.setCardNumber("123456789012345");
+        identificationNumberRepository.save(new IdentificationNumber(1L, "123458"));
+        assertFalse(userService.matchesIIN(user));
+    }
+
 }
