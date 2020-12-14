@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: user-service
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: user-service
+  template:
+    metadata:
+      labels:
+        run: user-service
+    spec:
+      containers:
+        - image: user-service:v1.0.1
+          imagePullPolicy: IfNotPresent
+          name: user-service
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: USER_SERVICE_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-db-secret
+                  key: user_service_db_user
+            - name: USER_SERVICE_DB_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-db-secret
+                  key: user_service_db_user_pwd
+            - name: USER_SERVICE_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-db-secret
+                  key: user_service_db_url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: user-service
+  name: user-service
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    run: user-service
+  type: NodePort
